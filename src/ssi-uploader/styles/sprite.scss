@@ -1,0 +1,39 @@
+$ban-10: -0px -0px 18px 18px;
+$ban-7: -0px -18px 18px 18px;
+$ban-7w: -0px -36px 18px 18px;
+$Check-7: -0px -54px 18px 18px;
+$Exclamation-7: -0px -72px 18px 18px;
+$trash-10: -0px -90px 18px 18px;
+$trash-7: -0px -108px 18px 18px;
+$ban-23: -0px -126px 31px 31px;
+$Check-23: -0px -157px 31px 31px;
+$Exclamation23: -0px -188px 31px 31px;
+@mixin sprite-width($sprite) {
+  width: nth($sprite, 3);
+}
+@mixin sprite-height($sprite) {
+  height: nth($sprite, 4);
+}
+@function sprite-width($sprite) {
+   @return nth($sprite, 3);
+}
+@function sprite-height($sprite) {
+   @return nth($sprite, 4);
+}
+@mixin sprite-position($sprite) {
+  $sprite-offset-x: nth($sprite, 1);
+  $sprite-offset-y: nth($sprite, 2);
+  background-position: $sprite-offset-x $sprite-offset-y;
+}
+@mixin sprite($sprite, $display: block) {
+   @include sprite-position($sprite);
+  background-repeat: no-repeat;
+  overflow: hidden;
+  display: $display;
+  @include sprite-width($sprite);
+  @include sprite-height($sprite);
+}
+
+.icon {
+  background-image: url('images/sprite.png');
+}

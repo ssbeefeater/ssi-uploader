@@ -1,0 +1,35 @@
+{
+  "name": "ssi-uploader",
+  "description": "An awesome jquery uploader.",
+  "version": "1.0.0",
+  "main": [
+    "dist/ssi-uploader/js/ssi-uploader.js",
+    "dist/ssi-uploader/styles/ssi-uploader.css"
+  ],
+  "dependencies": {
+    "jquery": ">1.9.x"
+  },
+  "keywords": [
+    "async",
+    "uploader",
+    "jquery",
+    "ssi-uploader",
+    "uploader",
+    "ajax"
+  ],
+  "authors": [
+    "ssbeefeater <ssbeefeater@gmail.com>"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "node_modules",
+    "bower_components",
+    "/src",
+    "package.json",
+    "gulpfile.js"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ssbeefeater/ssi-uploader.git"
+  }
+}

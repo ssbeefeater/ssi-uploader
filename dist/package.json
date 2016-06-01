@@ -1,0 +1,24 @@
+{
+  "name": "ssi-uploader",
+  "version": "1.0.0",
+  "main": "ssi-uploader/js/ssi-uploader.js",
+  "description": "An awesome jquery uploader",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "uploader",
+    "jquery",
+    "ssi-uploader",
+    "ajax",
+    "ssi"
+  ],
+  "license": {
+    "type": "MIT",
+    "url": "http://www.opensource.org/licenses/mit-license.php"
+  },
+  "author": "Mike Antoniadis <ssbeefeater@gmail.com> (http://ssbeefeater.github.io/)",
+  "dependencies": {
+    "jquery": ">1.9.x"
+  }
+}

@@ -1,0 +1,39 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Frameset//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd">
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>examples</title>
+    <link rel="stylesheet" href="ssi-uploader/styles/ssi-uploader.css"/>
+</head>
+<body>
+
+
+<table class="ie table">
+    <tr>
+        <td>Basic:
+
+            <input type="file" multiple id="ssi-upload"/>
+        </td>
+    </tr><tr>
+        <td>No preview:
+
+            <input type="file" multiple id="ssi-upload2"/>
+        </td>
+    </tr>
+    <tr>
+        <td>Not drop zone:
+
+            <input type="file" multiple id="ssi-upload3"/>
+        </td>
+    </tr>
+
+</table>
+<script src="https://code.jquery.com/jquery-1.12.3.min.js" integrity="sha256-aaODHAgvwQW1bFOGXMeX+pC4PZIPsvn2h1sArYOhgXQ=" crossorigin="anonymous"></script>
+<script src="ssi-uploader/js/ssi-uploader.js"></script>
+<script>
+    $('#ssi-upload').ssi_uploader({url:'uploadAction.php',maxFileSize:6,allowed:['jpg','gif','txt','png','pdf']});
+    $('#ssi-upload2').ssi_uploader({url:'uploadAction.php',preview:false});
+    $('#ssi-upload3').ssi_uploader({url:'uploadAction.php',dropZone:false});
+</script>
+</body>
+</html>
