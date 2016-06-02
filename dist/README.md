@@ -20,8 +20,8 @@ Install with [npm](https://www.npmjs.com/)
 npm install ssi-uploader
 ```
 ```javascript
-require('ssi-modal');
-# ('input').ssi_uploader({url:'uploadAction'})
+require('ssi-uploader');
+# ('#myInput').ssi_uploader({url:'uploadAction'})
 ```
 Install with [bower](http://bower.io/)
 
