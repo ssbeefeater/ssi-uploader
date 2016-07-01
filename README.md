@@ -1,4 +1,4 @@
-# ssi-modal
+# ssi-uploader
 
 An awesome jquery uploader.
 
