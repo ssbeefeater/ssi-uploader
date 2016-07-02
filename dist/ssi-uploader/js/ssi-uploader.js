@@ -156,23 +156,24 @@
         $uploadBox.on('click', '.ssi-abortUpload', function (e) {//abort one element
             var $eventTarget = $(e.currentTarget);
             var index = $eventTarget.data('delete');// get the element id
-            abortAction(thisS, index); // abort request
+            thisS.abort(index); // abort request
         });
 //----------------------------UPLOADFILES------------------------------------
         $uploadBtn.click(function () {// upload the files
             thisS.uploadFiles();
         });
-
         $abortBtn.click(function () { // abort all requests
-            for (var i = 0; i < thisS.uploadList.length; i++) { //all element in the list
-                if (typeof thisS.uploadList[i] === 'object') {// check if not deleted
-                    abortAction(thisS, i)
-                }
-            }
+            thisS.abortAll();
         });
 
     };
-
+    Ssi_upload.prototype.abortAll = function () {
+        for (var i = 0; i < this.uploadList.length; i++) { //all element in the list
+            if (typeof this.uploadList[i] === 'object') {// check if not deleted
+                this.abort(i)
+            }
+        }
+    };
     Ssi_upload.prototype.toUploadFiles = function (files) {
         if (typeof this.options.maxNumberOfFiles === 'number') {
             if ((this.inProgress + this.pending) >= this.options.maxNumberOfFiles) {// if in progress files + pending files are more than the number that we have define as max number of files pre download
@@ -415,7 +416,14 @@
                 formData.append(key, value);
             });
             if (typeof this.options.beforeUpload === 'function') {
-                this.options.beforeUpload();// execute the beforeUpload callback
+                try {
+                    this.options.beforeUpload();// execute the beforeUpload callback
+                } catch (err) {
+                    console.log('There is an error in beforeUpload callback');
+                    console.log(err);
+                    thisS.abortAll();
+                    return;
+                }
             }
             thisS.$element.find('input.ssi-uploadInput').trigger('beforeUpload.ssi-uploader');
             ajaxLoopRequest(formData, i);// make the request
@@ -461,13 +469,19 @@
                     $uploadBtn.find('#ssi-up_loading') //add spiner to uploadbutton
                      .html('<i class="fa fa-spinner fa-pulse"></i>');
                     if (typeof thisS.options.beforeEachUpload === 'function') {
+                        try {
+                            var msg = thisS.options.beforeEachUpload({// execute the beforeEachUpload callback and save the returned value
+                                name: thisS.toUpload[ii].name,//send some info of the file
+                                type: thisS.toUpload[ii].type,
+                                size: (thisS.toUpload[ii].size / 1024).toFixed(2)
 
-                        var msg = thisS.options.beforeEachUpload({// execute the beforeEachUpload callback and save the returned value
-                            name: thisS.toUpload[ii].name,//send some info of the file
-                            type: thisS.toUpload[ii].type,
-                            size: (thisS.toUpload[ii].size / 1024).toFixed(2)
-
-                        }, xhr);
+                            }, xhr);
+                        } catch (err) {
+                            console.log('There is an error in beforeEachUpload callback');
+                            console.log(err);
+                            thisS.abortAll();
+                            return;
+                        }
                     }
                     thisS.$element.find('input.ssi-uploadInput').trigger('beforeEachUpload.ssi-uploader');
                     if (xhr.status === 0) {
@@ -476,7 +490,7 @@
                                 msg = false; //because user have already aborted the request set to false or anything else except undefined to prevent to abort it again
                             }
                             thisS.abortedWithError++;// we have one error more
-                            abortAction(thisS, ii, msg);//call the abort function
+                            thisS.abort(ii, msg);//call the abort function
                         }
                     }
                 },
@@ -500,12 +514,17 @@
                         thisS.inProgress--;
                         $clearBtn.prop("disabled", false);
                         if (typeof thisS.options.onEachUpload === 'function') {//execute the onEachUpload callback
-                            thisS.options.onEachUpload({//and return some info
-                                uploadStatus: 'error',
-                                name: thisS.toUpload[ii].name,
-                                size: (thisS.toUpload[ii].size / 1024).toFixed(2),
-                                type: thisS.toUpload[ii].type
-                            });
+                            try {
+                                thisS.options.onEachUpload({//and return some info
+                                    uploadStatus: 'error',
+                                    name: thisS.toUpload[ii].name,
+                                    size: (thisS.toUpload[ii].size / 1024).toFixed(2),
+                                    type: thisS.toUpload[ii].type
+                                });
+                            } catch (err) {
+                                console.log('There is an error in onEachUpload callback');
+                                console.log(err);
+                            }
                         }
                         if (getCompleteStatus(thisS)) {//if no more elements in progress
                             finishUpload(thisS);
@@ -566,12 +585,17 @@
                 setElementMessage(thisS, ii, dataType, msg, title);
 
                 if (typeof thisS.options.onEachUpload === 'function') {//execute the onEachUpload callback
-                    thisS.options.onEachUpload({//and return some info
-                        uploadStatus: dataType,
-                        name: thisS.toUpload[ii].name,
-                        size: (thisS.toUpload[ii].size / 1024).toFixed(2),
-                        type: thisS.toUpload[ii].type
-                    });
+                    try {
+                        thisS.options.onEachUpload({//and return some info
+                            uploadStatus: dataType,
+                            name: thisS.toUpload[ii].name,
+                            size: (thisS.toUpload[ii].size / 1024).toFixed(2),
+                            type: thisS.toUpload[ii].type
+                        });
+                    } catch (err) {
+                        console.log('There is an error in onEachUpload callback');
+                        console.log(err);
+                    }
                 }
                 thisS.$element.find('input.ssi-uploadInput').trigger('onEachUpload.ssi-uploader');
                 thisS.inProgress--;//one less in progress upload
@@ -628,38 +652,37 @@
     var getCurrentListLength = function (thisS) { //get the list length
         return (thisS.inProgress + thisS.successfulUpload + thisS.aborted + thisS.abortedWithError + thisS.pending);
     };
-
     var setLastElementName = function (thisS) { //if one file in list get the last file's name and put it to the name preview
         var fileName = thisS.$element.find('#ssi-fileList').find('span').html();//find the only span left
         var ext = fileName.getExtension();//get the extension
         thisS.$element.find('.ssi-uploadDetails').removeClass('ssi-uploadBoxOpened');
         thisS.$element.find('.ssi-namePreview').html(cutFileName(fileName, ext, 15));//short the name and put it to the name preview
     };
-
-    var abortAction = function (thisS, index, title) {//abort a request
+    Ssi_upload.prototype.abort = function (index, title) {//abort a request
         if (typeof title === 'undefined') {//if no title
-            thisS.uploadList[index].abort();// abort the element
-            thisS.totalProgress[index] = '';
+            this.uploadList[index].abort();// abort the element
+            this.totalProgress[index] = '';
             title = 'Aborted';
-            thisS.aborted++;// one more aborted file
+            this.aborted++;// one more aborted file
         } else if (typeof title !== 'string') {//if not string that means that the request aborted with the beforeUpload callback and no message returned
             title = '';
         }
         //nothing of the above happened that means the user aborted the request with the beforeUpload callback and returned a message
-        var msg = thisS.language.aborted;
-        if (!thisS.options.preview) {
+        var msg = this.language.aborted;
+        if (!this.options.preview) {
             msg = '<span class="ban7w"></span>';
         }
-        setElementMessage(thisS, index, 'error', msg, title);
-        thisS.$element.find('#ssi-uploadProgress' + index).removeClass('ssi-hidden').addClass('ssi-canceledProgressBar');
-        thisS.toUpload[index] = undefined;
-        thisS.uploadList[index] = undefined;
-        thisS.imgNames[index] = undefined;
-        thisS.$element.find('#ssi-clearBtn').prop("disabled", false);
-        thisS.inProgress--;//one less in progress file
-        if (getCompleteStatus(thisS)) {//if no more file in progress
-            finishUpload(thisS);
+        setElementMessage(this, index, 'error', msg, title);
+        this.$element.find('#ssi-uploadProgress' + index).removeClass('ssi-hidden').addClass('ssi-canceledProgressBar');
+        this.toUpload[index] = undefined;
+        this.uploadList[index] = undefined;
+        this.imgNames[index] = undefined;
+        this.$element.find('#ssi-clearBtn').prop("disabled", false);
+        this.inProgress--;//one less in progress file
+        if (getCompleteStatus(this)) {//if no more file in progress
+            finishUpload(this);
         }
+
     };
 
     var finishUpload = function (thisS) {//when every uplaod ends
@@ -688,7 +711,12 @@
              .addClass('ssi-hidden');
         }
         if (typeof thisS.options.onUpload === 'function') {
-            thisS.options.onUpload();//execute the on Upload callback
+            try {
+                thisS.options.onUpload();//execute the on Upload callback
+            } catch (err) {
+                console.log('There is an error in onUpload callback');
+                console.log(err);
+            }
         }
         thisS.$element.find('input.ssi-uploadInput').trigger('onUpload.ssi-uploader');
         var $uploadBtn = thisS.$element.find('#ssi-uploadBtn');
