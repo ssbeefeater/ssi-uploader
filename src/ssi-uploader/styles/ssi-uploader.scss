@@ -112,7 +112,7 @@ opacity: 0.8;
   overflow: hidden;
   border-radius: 3px;
   width: 180px;
-  height: 35px;
+  min-height: 32px;
   margin: 2px 2px 2px 0;
   font-size: 15px;
   vertical-align: middle;
@@ -432,7 +432,6 @@ span.ssi-InputLabel input[type="file"] {
 }
 
 .document-item::after {
-  content: 'file';
   content: attr(filetype);
   left: -4px;
   padding: 0px 2px;
