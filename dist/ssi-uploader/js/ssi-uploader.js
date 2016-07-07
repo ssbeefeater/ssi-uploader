@@ -850,6 +850,23 @@
             sizeError: '$1 έχει ξεπεράσει το όριο των $2.',// $1=file name ,$2=max file size ie( example.jpg has has exceed the size limit of 2mb)
             extError: '$1 αρχεία δεν υποστηρίζονται.',// $1=file extension ie(exe files are not supported)
             someErrorsOccurred: 'Σημειώθηκαν ορισμένα λάθη!'
+        },
+        fr: { //@author Badulesia
+            success: 'Succès',
+            sucUpload: 'Upload réussi',
+            chooseFiles: 'Choisissez fichiers',
+            uploadFailed: 'Upload échoué',
+            serverError: 'Erreur interne du serveur',
+            error: 'Erreur',
+            abort: 'Annuler',
+            aborted: 'Annulé',
+            files: 'Fichiers',
+            upload: 'Upload',
+            clear: 'Effacer',
+            drag: 'Glisser déposer',
+            sizeError: '$1 excède la taille limite de $2',// $1=file name ,$2=max ie( example.jpg has has exceed the size limit of 2mb)
+            extError: 'fichier de types $1 non autorisé',//$1=file extension ie(exe files are not supported)
+            someErrorsOccurred: 'Un erreur a eu lieu !'
         }
     };
 
