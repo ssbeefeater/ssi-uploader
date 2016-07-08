@@ -866,7 +866,7 @@
             drag: 'Glisser déposer',
             sizeError: '$1 excède la taille limite de $2',// $1=file name ,$2=max ie( example.jpg has has exceed the size limit of 2mb)
             extError: 'fichier de types $1 non autorisé',//$1=file extension ie(exe files are not supported)
-            someErrorsOccurred: 'Un erreur a eu lieu !'
+            someErrorsOccurred: 'Une erreur a eu lieu !'
         }
     };
 
