@@ -853,19 +853,19 @@
         },
         fr: { //@author Badulesia
             success: 'Succès',
-            sucUpload: 'Upload réussi',
+            sucUpload: 'Envoi réussi',
             chooseFiles: 'Choisissez fichiers',
-            uploadFailed: 'Upload échoué',
+            uploadFailed: 'Envoi échoué',
             serverError: 'Erreur interne du serveur',
             error: 'Erreur',
             abort: 'Annuler',
             aborted: 'Annulé',
             files: 'Fichiers',
-            upload: 'Upload',
+            upload: 'Envoyer',
             clear: 'Effacer',
             drag: 'Glisser déposer',
             sizeError: '$1 excède la taille limite de $2',// $1=file name ,$2=max ie( example.jpg has has exceed the size limit of 2mb)
-            extError: 'fichier de types $1 non autorisé',//$1=file extension ie(exe files are not supported)
+            extError: 'Types de fichier $1 non autorisé',//$1=file extension ie(exe files are not supported)
             someErrorsOccurred: 'Une erreur a eu lieu !'
         }
     };
