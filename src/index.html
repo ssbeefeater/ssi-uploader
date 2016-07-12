@@ -26,6 +26,11 @@
             <input type="file" multiple id="ssi-upload3"/>
         </td>
     </tr>
+    <tr>
+        <td>Allowed:
+            <input type="file" multiple id="ssi-upload4"/>
+        </td>
+    </tr>
 
 </table>
 <script src="https://code.jquery.com/jquery-1.12.3.min.js" integrity="sha256-aaODHAgvwQW1bFOGXMeX+pC4PZIPsvn2h1sArYOhgXQ=" crossorigin="anonymous"></script>
@@ -34,6 +39,7 @@
     $('#ssi-upload').ssi_uploader({url:'uploadAction.php',maxFileSize:6,allowed:['jpg','gif','txt','png','pdf']});
     $('#ssi-upload2').ssi_uploader({url:'uploadAction.php',preview:false});
     $('#ssi-upload3').ssi_uploader({url:'uploadAction.php',dropZone:false});
+    $('#ssi-upload4').ssi_uploader({url:'uploadAction.php',dropZone:false,allowed:["pdf"]});
 </script>
 </body>
 </html>

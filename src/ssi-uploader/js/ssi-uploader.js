@@ -203,6 +203,8 @@
         for (var i = 0; i < filesLength; i++) {
             var file = files[i],
              ext = file.name.getExtension();// get file's extension
+            console.log(this.options.allowed)
+
             if ($.inArray(ext, this.options.allowed) === -1) { // if requested file not allowed
                 if (length > filesLength) {//there are more file we dont pick
                     filesLength++;//the add 1 more loop
@@ -758,7 +760,7 @@
             },
             beforeEachUpload: function () {
             },
-            allowed: ['jpg', 'jpeg', 'png', 'bmp', 'gif'],
+            allowed: '',
             errorHandler: {
                 method: function (msg) {
                     alert(msg);
@@ -768,6 +770,7 @@
             }
         };
         var options = $.extend(true, defaults, opts);
+        options.allowed = options.allowed || ['jpg', 'jpeg', 'png', 'bmp', 'gif'];
         return this.each(function () {
             var $element = $(this);
             if ($element.is('input[type="file"]')) {
