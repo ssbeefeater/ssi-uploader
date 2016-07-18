@@ -29,16 +29,16 @@
     };
     Ssi_upload.prototype.init = function (element) {
         $(element).addClass('ssi-uploadInput')
-         .after(this.$element = $('<div class="ssi-uploader">'));
+            .after(this.$element = $('<div class="ssi-uploader">'));
         var $chooseBtn = $('' +
-         '<span class="ssi-InputLabel">' +
-         '<button class="ssi-button success">' + this.language.chooseFiles + '</button>' +
-         '</span>').append(element);
+            '<span class="ssi-InputLabel">' +
+            '<button class="ssi-button success">' + this.language.chooseFiles + '</button>' +
+            '</span>').append(element);
         var $uploadBtn = $('<button id="ssi-uploadBtn" class="ssi-button success ssi-hidden" >' +
-         '<span class="ssi-btnIn">' + this.language.upload + '&nbsp;</span>' +
-         '<div id="ssi-up_loading" class="ssi-btnIn"></div></button>');
+            '<span class="ssi-btnIn">' + this.language.upload + '&nbsp;</span>' +
+            '<div id="ssi-up_loading" class="ssi-btnIn"></div></button>');
         var $clearBtn = $('<button id="ssi-clearBtn" class="ssi-hidden ssi-button info" >' + this.language.clear +
-         '</button>');
+            '</button>');
         var $abortBtn = $('<button id="ssi-abortBtn" class="ssi-button error ssi-cancelAll ssi-hidden" ><span class="inBtn">' + this.language.abort + ' </span></button>');
 
         this.$element.append($('<div class="ssi-buttonWrapper">').append($chooseBtn, $abortBtn, $uploadBtn, $clearBtn));
@@ -48,12 +48,12 @@
             var $fileList = $('<table id="ssi-fileList" class="ssi-fileList"></table>');
             var $namePreview = $('<span class="ssi-namePreview"></span>');
             var $mainBox = $('<div id="ssi-uploadFiles" class="ssi-tooltip ssi-uploadFiles ' + (this.options.dropZone ? 'ssi-dropZone' : '') + '"><div id="ssi-uploadProgressNoPreview" class="ssi-uploadProgressNoPreview"></div></div>')
-             .append($namePreview);
+                .append($namePreview);
             var $uploadDetails = $('<div class="ssi-uploadDetails"></div>').append($fileList);
             $uploadBox = $('<div class="ssi-uploadBoxWrapper ssi-uploadBox"></div>').append($mainBox, $uploadDetails);
             this.$element.prepend($uploadBox);
         } else {
-            $uploadBox = $('<div id="ssi-previewBox" class="ssi-uploadBox ssi-previewBox ' + (this.options.dropZone ? 'ssi-dropZonePreview ssi-dropZone"><div id="ssi-DropZoneBack">' + this.language.drag + '</div>' : '">') + '</div>');
+            $uploadBox = $('<div id="ssi-previewBox" class="ssi-uploadBox ssi-previewBox ' + (this.options.dropZone ? 'ssi-dropZonePreview ssi-dropZone' : '') + '"><div id="ssi-info">' + (this.options.dropZone ? '<div id="ssi-DropZoneBack">' + this.language.drag + '</div>' : '') + '<div id="ssi-fileNumber" class="ssi-hidden">?</div></div></div>');
             this.$element.append($uploadBox);
         }
         var thisS = this;
@@ -99,28 +99,31 @@
 
         var $tooltip;
 
-        $uploadBox.on('mouseenter', '.ssi-statusLabel', function (e) { //the tooltip
+        $uploadBox.on('mouseenter', '.ssi-statusLabel', function (e) {
             var $eventTarget = $(e.currentTarget);
             var title = $eventTarget.attr('data-status');
             if (!title || title === '') {
                 return;
             }
-            var tooltipHeight = '35';
-            if ($eventTarget.hasClass('ssi-noPreviewSubMessage')) {
-                tooltipHeight = 0;
-            }
-            $tooltip = $('<div class="ssi-infoTooltip">'
-             + title +
-             '</div>')
-             .appendTo(thisS.$element)
-             .css({top: $eventTarget.position().top - tooltipHeight, left: $eventTarget.position().left - 5})
-             .fadeIn('slow');
-
+            tooltip($eventTarget, title, thisS);
         });
+        $uploadBox.on('mouseenter', '#ssi-fileNumber', function (e) {
+            var $eventTarget = $(e.currentTarget);
 
-        $uploadBox.on('mouseleave', '.ssi-statusLabel', function () {
-            if ($tooltip)
-                $tooltip.remove();
+            /*  this.totalFilesLength = 0;
+             this.successfulUpload = 0;
+             this.aborted = 0;
+             this.abortedWithError = 0;
+             this.pending = 0;
+             this.inProgress = 0;
+             this.currentListLength = 0;
+
+             thisS.successfulUpload = 0;
+             thisS.aborted = 0;
+             thisS.abortedWithError = 0;
+             */
+            var message = " " + thisS.language.pending + ": " + thisS.pending + " <br> " + thisS.language.completed + ": " + (thisS.successfulUpload + thisS.aborted + thisS.abortedWithError) + "<br> " + thisS.language.inProgress + ": " + thisS.inProgress;
+            tooltip($eventTarget, message, thisS);
         });
 
         $uploadBox.on('click', '.ssi-removeBtn', function (e) { //remove the file from list
@@ -128,6 +131,9 @@
             var index = $currentTarget.data('delete'); //get file's index
             thisS.pending--; //reduce pending number by 1
             thisS.currentListLength--; //reduce current list length by 1
+            if (thisS.pending < 1) {
+                thisS.$element.find('#ssi-fileNumber').addClass('ssi-hidden');
+            }
             if (thisS.pending === 0) {
                 $uploadBtn.prop('disabled', true); //if there is no more files disable upload button
             }
@@ -167,10 +173,31 @@
         });
 
     };
+    function tooltip($target, text, thisS) {
+        $target = $($target);
+        text = text || $target.data('title');
+        if (!text)text = $target.attr('title');
+        if (!text)return;
+        var $toolTip = $('<div class="ssi-fadeOut ssi-fade ssi-tooltipText">'
+            + text +
+            '</div>').appendTo(thisS.$element);
+        $target.one('mouseleave', function () {
+            $toolTip.remove();
+        });
+        var offset = -16;
+        if ($target.hasClass('ssi-noPreviewSubMessage')) {
+            offset = 23;
+        }
+        $toolTip.css({top: $target.position().top - $toolTip.height() + offset, left: $target.position().left})
+            .removeClass('ssi-fadeOut');
+
+        return $toolTip;
+    }
+
     Ssi_upload.prototype.abortAll = function () {
         for (var i = 0; i < this.uploadList.length; i++) { //all element in the list
             if (typeof this.uploadList[i] === 'object') {// check if not deleted
-                this.abort(i)
+                this.abort(i);
             }
         }
     };
@@ -181,14 +208,14 @@
             }
         }
         var thisS = this,
-         j = 0,
-         length,
-         imgContent = '',
-         $uploadBtn = this.$element.find('#ssi-uploadBtn'),
-         $clearBtn = this.$element.find('#ssi-clearBtn'),
-         $fileList = this.$element.find('#ssi-fileList'),
-         $uploadBox = this.$element.find('.ssi-uploadBox'),
-         imgs = [];
+            j = 0,
+            length,
+            imgContent = '',
+            $uploadBtn = this.$element.find('#ssi-uploadBtn'),
+            $clearBtn = this.$element.find('#ssi-clearBtn'),
+            $fileList = this.$element.find('#ssi-fileList'),
+            $uploadBox = this.$element.find('.ssi-uploadBox'),
+            imgs = [];
         if ((this.inProgress === 0 && this.pending === 0)) { //if no file are pending or are in progress
             this.clear(); //clear the list
         }
@@ -202,7 +229,7 @@
         //
         for (var i = 0; i < filesLength; i++) {
             var file = files[i],
-             ext = file.name.getExtension();// get file's extension
+                ext = file.name.getExtension();// get file's extension
 
             if ($.inArray(ext, this.options.allowed) === -1) { // if requested file not allowed
                 if (length > filesLength) {//there are more file we dont pick
@@ -254,7 +281,7 @@
                 $uploadBtn.removeClass('ssi-hidden');
                 $clearBtn.removeClass('ssi-hidden');
             }
-            $clearBtn.prop('disabled', false);
+            $clearBtn.prop('disabled', true);
             thisS.toUpload[index] = file;
             var filename = file.name;
             var ext = filename.getExtension(); //get file's extension
@@ -262,13 +289,12 @@
             if (thisS.options.preview) {
                 var getTemplate = function (content) {
                     return '<table class="ssi-imgToUploadTable ssi-pending">' +
-                     '<tr><td class="ssi-upImgTd">' + content + '</td></tr>' +
-                     '<tr><td><div id="ssi-uploadProgress' + index + '" class="ssi-hidden ssi-uploadProgress"></div></td></tr>' +
-                     '<tr><td><button data-delete="' + index + '" class=" ssi-button error ssi-removeBtn"><span class="trash10 trash"></span></button></td></tr>' +
-                     '<tr><td>' + cutFileName(filename, ext, 15) + '</td></tr></table>'
+                        '<tr><td class="ssi-upImgTd">' + content + '</td></tr>' +
+                        '<tr><td><div id="ssi-uploadProgress' + index + '" class="ssi-hidden ssi-uploadProgress"></div></td></tr>' +
+                        '<tr><td><button data-delete="' + index + '" class=" ssi-button error ssi-removeBtn"><span class="trash10 trash"></span></button></td></tr>' +
+                        '<tr><td>' + cutFileName(filename, ext, 15) + '</td></tr></table>'
                 };
                 var fileType = file.type.split('/');
-
                 if (fileType[0] == 'image') {
                     $uploadBtn.prop("disabled", true);
                     $clearBtn.prop("disabled", true);
@@ -278,14 +304,22 @@
                         imgs[index] = fileReader.result;
                         j++;
                         if (toUploadLength === j) {// if all elements are in place lets load images
+                            thisS.$element.find('#ssi-fileNumber').removeClass('ssi-hidden');
                             $uploadBox.append(imgContent);
-                            $uploadBtn.prop("disabled", false);
-                            $clearBtn.prop("disabled", false);
                             setTimeout(function () {
                                 setImg();//and load the images
+                                $uploadBtn.prop("disabled", false);
+                                $clearBtn.prop("disabled", false);
                             }, 10);
+                            $uploadBtn.prop("disabled", false);
+                            $clearBtn.prop("disabled", false);
+
                             imgContent = '';
                             toUploadLength = [];
+                        } else if (toUploadLength / 2 == Math.round(j)) {
+                            $uploadBox.append(imgContent);
+                            setImg();//and load the images
+                            imgContent = '';
                         }
                     };
                     fileReader.readAsDataURL(file);
@@ -297,18 +331,18 @@
             } else {
                 thisS.$element.find('.ssi-namePreview').html((index === 0 ? cutFileName(filename, ext, 13) : (thisS.currentListLength + 1) + ' ' + thisS.language.files));//set name preview
                 $fileList.append('<tr class="ssi-space"><td></td></tr>' +//append files element to dom
-                 '<tr class="ssi-toUploadTr ssi-pending"><td><div id="ssi-uploadProgress' + index + '" class="ssi-hidden ssi-uploadProgress ssi-uploadProgressNoPre"></div>' +
-                 '<span>' + cutFileName(filename, ext, 20) + '</span></td>' +
-                 '<td><a data-delete="' + index + '" class="ssi-button ssi-removeBtn  ssi-removeBtnNP"><span class="trash7 trash"></span></a></td></tr>');
+                    '<tr class="ssi-toUploadTr ssi-pending"><td><div id="ssi-uploadProgress' + index + '" class="ssi-hidden ssi-uploadProgress ssi-uploadProgressNoPre"></div>' +
+                    '<span>' + cutFileName(filename, ext, 20) + '</span></td>' +
+                    '<td><a data-delete="' + index + '" class="ssi-button ssi-removeBtn  ssi-removeBtnNP"><span class="trash7 trash"></span></a></td></tr>');
             }
 
             var setImg = function () {//load the images
                 for (var i = 0; i < imgs.length; i++) {
                     if (imgs[i] !== null) {
                         $uploadBox.find("#ssi-uploadProgress" + i).parents('table.ssi-imgToUploadTable')
-                         .find('.ssi-imgToUpload')
-                         .attr('src', imgs[i]) //set src of the image
-                         .next().remove();//remove the spinner
+                            .find('.ssi-imgToUpload')
+                            .attr('src', imgs[i]) //set src of the image
+                            .next().remove();//remove the spinner
                         imgs[i] = null;
                     }
                 }
@@ -353,7 +387,7 @@
                 clearCompleted(this);
         }
         var $uploadBtn = this.$element.find('#ssi-uploadBtn'),
-         $clearBtn = this.$element.find('#ssi-clearBtn');
+            $clearBtn = this.$element.find('#ssi-clearBtn');
         this.currentListLength = getCurrentListLength(this);
         if (this.inProgress === 0) { //if no file are uploading right now
             this.totalProgress = [];
@@ -361,6 +395,7 @@
         if ((this.currentListLength === 0)) { // if no items in the list
             $clearBtn.addClass('ssi-hidden');
             $uploadBtn.addClass('ssi-hidden');
+            this.$element.find('#ssi-fileNumber').addClass('ssi-hidden');
             this.totalFilesLength = 0;
             if (!this.options.dropZone) {
                 this.$element.find('.ssi-uploadBox').removeClass('ssi-uploadNoDropZone')
@@ -388,18 +423,28 @@
     };
     Ssi_upload.prototype.uploadFiles = function () {// upload the pending files
         if (this.pending > 0) {
+            if (typeof this.options.beforeUpload === 'function') {
+                try {
+                    this.options.beforeUpload();// execute the beforeUpload callback
+                } catch (err) {
+                    if (!this.options.ignoreCallbackErrors) {
+                        console.log('There is an error in beforeUpload callback');
+                        return console.log(err);
+                    }
+                }
+            }
             this.$element.find('#ssi-abortBtn').removeClass('ssi-hidden');
             this.$element.find('.ssi-removeBtn')
-             .addClass('ssi-abortUpload')
-             .removeClass('ssi-removeBtn')
-             .children('span').removeClass('trash7 trash10 trash')
-             .addClass((this.options.preview ? 'ban7w' : 'ban7'));//transform remove button to abort button
+                .addClass('ssi-abortUpload')
+                .removeClass('ssi-removeBtn')
+                .children('span').removeClass('trash7 trash10 trash')
+                .addClass((this.options.preview ? 'ban7w' : 'ban7'));//transform remove button to abort button
             var $uploadBtn = this.$element.find('#ssi-uploadBtn'),
-             $clearBtn = this.$element.find('#ssi-clearBtn');
+                $clearBtn = this.$element.find('#ssi-clearBtn');
             $uploadBtn.prop("disabled", true);
             var thisS = this,
-             formData = new FormData(),//set the form data
-             i = this.totalFilesLength;
+                formData = new FormData(),//set the form data
+                i = this.totalFilesLength;
             if (this.totalFilesLength !== 0 && !this.options.preview) {
                 setNamePreview(this);
             }
@@ -409,23 +454,13 @@
             if (this.inProgress === this.currentListLength) {// disable the clear button if no items in list we can be remove
                 $clearBtn.prop("disabled", true);
             }
-            while (this.toUpload[i] === null) { // do it until you find a file
+            while (thisS.toUpload[i] === null || thisS.toUpload[i] === '') { // do it until you find a file
                 i++;
             }
             formData.append('files[]', thisS.toUpload[i]);//append the first file to the form data
             $.each(this.options.data, function (key, value) {// append all extra data
                 formData.append(key, value);
             });
-            if (typeof this.options.beforeUpload === 'function') {
-                try {
-                    this.options.beforeUpload();// execute the beforeUpload callback
-                } catch (err) {
-                    console.log('There is an error in beforeUpload callback');
-                    console.log(err);
-                    thisS.abortAll();
-                    return;
-                }
-            }
             thisS.$element.find('input.ssi-uploadInput').trigger('beforeUpload.ssi-uploader');
             ajaxLoopRequest(formData, i);// make the request
         }
@@ -438,7 +473,7 @@
             }
             var uploadBar = thisS.$element.find('#ssi-uploadProgress' + ii);//get the file's  progress bar
             uploadBar.removeClass('ssi-hidden') //make it visible
-             .parents(selector).removeClass('ssi-pending');
+                .parents(selector).removeClass('ssi-pending');
             var ajaxOptions = $.extend({}, {//store the request to the uploadList variable
                 xhr: function () {
                     var xhr = new window.XMLHttpRequest();
@@ -454,10 +489,10 @@
                             var sum = arraySum(thisS.totalProgress) / (thisS.inProgress + thisS.successfulUpload);//and calculate the overall progress
                             if (!thisS.options.preview) {
                                 thisS.$element.find('#ssi-uploadProgressNoPreview')
-                                 .removeClass('ssi-hidden')
-                                 .css({
-                                     width: sum + '%'
-                                 });
+                                    .removeClass('ssi-hidden')
+                                    .css({
+                                        width: sum + '%'
+                                    });
                             }
                             $uploadBtn.find('#ssi-up_loading').html(Math.ceil(sum) + '%');// add to upload button the current overall progress percent number
                         }
@@ -468,7 +503,7 @@
                 beforeSend: function (xhr) {
                     thisS.uploadList[ii] = xhr;
                     $uploadBtn.find('#ssi-up_loading') //add spiner to uploadbutton
-                     .html('<i class="fa fa-spinner fa-pulse"></i>');
+                        .html('<i class="fa fa-spinner fa-pulse"></i>');
                     if (typeof thisS.options.beforeEachUpload === 'function') {
                         try {
                             var msg = thisS.options.beforeEachUpload({// execute the beforeEachUpload callback and save the returned value
@@ -478,9 +513,15 @@
 
                             }, xhr);
                         } catch (err) {
-                            console.log('There is an error in beforeEachUpload callback');
-                            console.log(err);
-                            thisS.abortAll();
+                            if (err.name == 'Error') {
+                                thisS.abort(ii, undefined, err.message);//call the abort function
+                            } else {
+                                if (!thisS.options.ignoreCallbackErrors) {
+                                    console.log('There is an error in beforeEachUpload callback. Filename:' + thisS.toUpload[ii].name);
+                                    console.log(err);
+                                    thisS.abort(ii, undefined, thisS.language.wentWrong);//call the abort function
+                                }
+                            }
                             return;
                         }
                     }
@@ -514,6 +555,7 @@
                         thisS.totalProgress[ii] = '';
                         thisS.inProgress--;
                         $clearBtn.prop("disabled", false);
+
                         if (typeof thisS.options.onEachUpload === 'function') {//execute the onEachUpload callback
                             try {
                                 thisS.options.onEachUpload({//and return some info
@@ -523,8 +565,11 @@
                                     type: thisS.toUpload[ii].type
                                 });
                             } catch (err) {
-                                console.log('There is an error in onEachUpload callback');
-                                console.log(err);
+                                if (!thisS.options.ignoreCallbackErrors) {
+                                    console.log('There is an error in onEachUpload callback. File name:' + thisS.toUpload[ii].name);
+                                    console.log(err);
+                                }
+
                             }
                         }
                         if (getCompleteStatus(thisS)) {//if no more elements in progress
@@ -584,7 +629,6 @@
                     msg = '<span class="' + spanClass + '7"></span>';
                 }
                 setElementMessage(thisS, ii, dataType, msg, title);
-
                 if (typeof thisS.options.onEachUpload === 'function') {//execute the onEachUpload callback
                     try {
                         thisS.options.onEachUpload({//and return some info
@@ -613,7 +657,7 @@
 
             i = ii;
             i++;//go to the next element
-            while (thisS.toUpload[i] === null) {// do it until you find a file
+            while (thisS.toUpload[i] === null || thisS.toUpload[i] === '') {// do it until you find a file
                 i++;
             }
             if (i < thisS.toUpload.length) {// if more files exist start the next request
@@ -639,7 +683,7 @@
         element = thisS.$element.find(".ssi-abortUpload[data-delete='" + index + "']");
         element.parents(elementSelector).addClass('ssi-completed');
         element.after(getResultMessage(msgType, msg, title, className))
-         .remove();
+            .remove();
     };
 
     var getCompleteStatus = function (thisS) {//check if file are in progress
@@ -659,13 +703,13 @@
         thisS.$element.find('.ssi-uploadDetails').removeClass('ssi-uploadBoxOpened');
         thisS.$element.find('.ssi-namePreview').html(cutFileName(fileName, ext, 15));//short the name and put it to the name preview
     };
-    Ssi_upload.prototype.abort = function (index, title) {//abort a request
+    Ssi_upload.prototype.abort = function (index, title, mmsg) {//abort a request
         if (typeof title === 'undefined') {//if no title
             this.uploadList[index].abort();// abort the element
             this.totalProgress[index] = '';
-            title = 'Aborted';
+            title = mmsg || 'Aborted';
             this.aborted++;// one more aborted file
-        } else if (typeof title !== 'string') {//if not string that means that the request aborted with the beforeUpload callback and no message returned
+        } else if (typeof title !== 'string') {//if not string that means that the request aborted with the beforeEachUpload callback and no message returned
             title = '';
         }
         //nothing of the above happened that means the user aborted the request with the beforeUpload callback and returned a message
@@ -673,7 +717,7 @@
         if (!this.options.preview) {
             msg = '<span class="ban7w"></span>';
         }
-        setElementMessage(this, index, 'error', msg, title);
+        setElementMessage(this, index, 'error', msg, (title));
         this.$element.find('#ssi-uploadProgress' + index).removeClass('ssi-hidden').addClass('ssi-canceledProgressBar');
         this.toUpload[index] = undefined;
         this.uploadList[index] = undefined;
@@ -687,7 +731,6 @@
     };
 
     var finishUpload = function (thisS) {//when every uplaod ends
-
         thisS.$element.find('#ssi-abortBtn').addClass('ssi-hidden');
         if (!thisS.options.preview) {//display tha main message in the name preview
             var type = 'error', title = '', msg = '';
@@ -708,23 +751,25 @@
             }
             thisS.$element.find('.ssi-namePreview').append(getResultMessage(type, msg, title, 'ssi-noPreviewMessage'));//show the message in the name preview
             thisS.$element.find('#ssi-uploadProgressNoPreview') //remove main overall progress bar
-             .removeAttr('styles')
-             .addClass('ssi-hidden');
+                .removeAttr('styles')
+                .addClass('ssi-hidden');
         }
         if (typeof thisS.options.onUpload === 'function') {
             try {
                 thisS.options.onUpload();//execute the on Upload callback
             } catch (err) {
-                console.log('There is an error in onUpload callback');
-                console.log(err);
+                if (!thisS.options.ignoreCallbackErrors) {
+                    console.log('There is an error in onUpload callback');
+                    console.log(err);
+                }
             }
         }
         thisS.$element.find('input.ssi-uploadInput').trigger('onUpload.ssi-uploader');
         var $uploadBtn = thisS.$element.find('#ssi-uploadBtn');
         thisS.$element.find('#ssi-clearBtn').prop("disabled", false);
         $uploadBtn.prop("disabled", false)
-         .find('#ssi-up_loading')
-         .empty();
+            .find('#ssi-up_loading')
+            .empty();
         if (thisS.pending === 0) {
             $uploadBtn.addClass('ssi-hidden');
             thisS.toUpload = [];
@@ -734,9 +779,6 @@
         thisS.uploadList = [];
         thisS.totalProgress = [];
         thisS.currentListLength = getCurrentListLength(thisS);
-        thisS.successfulUpload = 0;
-        thisS.aborted = 0;
-        thisS.abortedWithError = 0;
         thisS.inProgress = 0;
     };
 
@@ -749,6 +791,7 @@
             dropZone: true,
             maxNumberOfFiles: '',
             responseValidation: false,
+            ignoreCallbackErrors: false,
             maxFileSize: 2,
             ajaxOptions: {},
             onUpload: function () {
@@ -834,7 +877,11 @@
             drag: 'Drag n Drop',
             sizeError: '$1 exceed the size limit of $2',// $1=file name ,$2=max ie( example.jpg has has exceed the size limit of 2mb)
             extError: '$1 file types are not supported',//$1=file extension ie(exe files are not supported)
-            someErrorsOccurred: 'Some errors occurred!'
+            someErrorsOccurred: 'Some errors occurred!',
+            wentWrong: 'Something went wrong!',
+            pending: 'Pending',
+            completed: 'Completed',
+            inProgress: 'In progress'
         },
         gr: {
             success: 'Επιτυχία',
@@ -851,7 +898,11 @@
             drag: 'Συρετε εδώ...',
             sizeError: '$1 έχει ξεπεράσει το όριο των $2.',// $1=file name ,$2=max file size ie( example.jpg has has exceed the size limit of 2mb)
             extError: '$1 αρχεία δεν υποστηρίζονται.',// $1=file extension ie(exe files are not supported)
-            someErrorsOccurred: 'Σημειώθηκαν ορισμένα λάθη!'
+            someErrorsOccurred: 'Σημειώθηκαν ορισμένα λάθη!',
+            wentWrong: 'Κάτι πήγε στραβά!',
+            pending: 'Σε εκκρεμότητα',
+            completed: 'Ολοκληρομένα',
+            inProgress: 'Σε εξέλιξη'
         },
         fr: { //@author Badulesia
             success: 'Succès',
@@ -868,7 +919,11 @@
             drag: 'Glisser déposer',
             sizeError: '$1 excède la taille limite de $2',// $1=file name ,$2=max ie( example.jpg has has exceed the size limit of 2mb)
             extError: 'Types de fichier $1 non autorisé',//$1=file extension ie(exe files are not supported)
-            someErrorsOccurred: 'Une erreur a eu lieu !'
+            someErrorsOccurred: 'Une erreur a eu lieu !',
+            wentWrong: 'Une erreur a eu lieu !',
+            pending: 'Εn attendant',
+            completed: 'Terminé',
+            inProgress: 'En cours'
         }
     };
 

@@ -6,18 +6,35 @@
   background-image: url("images/sprite.png");
 }
 
-.ssi-infoTooltip, .ssi-tooltipText {
+.ssi-tooltipText {
   border: 1px #b7b7b7 solid;
   border-radius: 6px;
   padding: 7px;
   color: #fff;
-  display: none;
+  display: block;
+  white-space: nowrap;
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
   background-color: #151515;
   position: absolute;
   font-size: 14px;
   font-weight: 500;
   opacity: 1;
   z-index: 30000;
+}
+
+.ssi-tooltipText.ssi-fade {
+  -webkit-transition: opacity .8s;
+  transition: opacity .8s;
+}
+
+.ssi-tooltipText.ssi-fadeOut {
+  opacity: 0;
+}
+
+.ssi-tooltipText.ssi-fadeIn {
+  opacity: 1;
 }
 
 .ssi-button {
@@ -109,14 +126,30 @@
   content: 'Drag n Drop Files';
 }
 
-#ssi-DropZoneBack {
-  z-index: -1;
-  overflow: hidden;
-}
-
 .ssi-removeBtn {
   margin: 5px 0 5px 0;
   padding: 0;
+}
+
+#ssi-info::after {
+  content: ' ';
+  display: block;
+  clear: both;
+}
+
+#ssi-info #ssi-DropZoneBack {
+  z-index: -1;
+  float: left;
+  overflow: hidden;
+}
+
+#ssi-info #ssi-fileNumber {
+  float: right;
+}
+
+#ssi-info #ssi-fileNumber:hover {
+  cursor: pointer;
+  color: #636363;
 }
 
 .ssi-uploader::after {

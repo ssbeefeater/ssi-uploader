@@ -1,6 +1,6 @@
 {
   "name": "ssi-uploader",
-  "version": "1.0.10",
+  "version": "1.1.0",
   "main": "ssi-uploader/js/ssi-uploader.js",
   "description": "An awesome jquery uploader",
   "scripts": {

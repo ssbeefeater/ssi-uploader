@@ -1,18 +1,31 @@
 @import 'sprite';
 @import 'sprite';
-
-.ssi-infoTooltip, .ssi-tooltipText {
+.ssi-tooltipText {
+  &.ssi-fade {
+    transition: opacity .8s;
+  }
+  &.ssi-fadeOut {
+    opacity: 0;
+  }
+  &.ssi-fadeIn {
+    opacity: 1;
+  }
   border: 1px #b7b7b7 solid;
   border-radius: 6px;
   padding: 7px;
   color: #fff;
-  display: none;
+  display: block;
+  white-space: nowrap;
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
   background-color: #151515;
   position: absolute;
   font-size: 14px;
   font-weight: 500;
   opacity: 1;
   z-index: 30000;
+
 }
 
 .ssi-button {
@@ -55,12 +68,14 @@
     }
   }
 }
-.ssi-button[disabled]{
-opacity: 0.8;
- pointer-events: none;
+
+.ssi-button[disabled] {
+  opacity: 0.8;
+  pointer-events: none;
 }
+
 .ssi-statusLabel {
-  padding: 2px 6px ;
+  padding: 2px 6px;
   text-align: center;
   font-size: 10px;
   color: #fff;
@@ -91,20 +106,39 @@ opacity: 0.8;
   content: 'Drag n Drop Files';
 }
 
-#ssi-DropZoneBack {
-  z-index: -1;
-  overflow: hidden;
-}
-
 .ssi-removeBtn {
   margin: 5px 0 5px 0;
   padding: 0;
 }
-.ssi-uploader::after{
-  content:' ';
-  display:block;
-  clear:both;
+
+#ssi-info {
+  &::after {
+    content: ' ';
+    display: block;
+    clear: both;
+  }
+  #ssi-DropZoneBack {
+    z-index: -1;
+    float: left;
+    overflow: hidden;
+  }
+  #ssi-fileNumber {
+    &:hover {
+      cursor: pointer;
+      color: #636363;
+    }
+    float: right;
+  }
 }
+
+.ssi-uploader {
+  &::after {
+    content: ' ';
+    display: block;
+    clear: both;
+  }
+}
+
 .ssi-uploadFiles {
   position: relative;
   float: left;
@@ -121,7 +155,6 @@ opacity: 0.8;
   background: #FFFFFF;
   padding-right: 1px;
 }
-
 
 span.ban7 {
   @extend .icon;
@@ -149,7 +182,7 @@ span.ban23 {
 span.check7 {
   @extend .icon;
   @include sprite($Check-7);
-background-color: #40b056;
+  background-color: #40b056;
   margin-top: 2px;
   height: 17px;
 }
@@ -182,8 +215,6 @@ span.trash10 {
   @extend .icon;
   @include sprite($trash-10);
 }
-
-
 
 .ssi-previewBox.ssi-dragOver, .ssi-dragOver .ssi-dropZone {
   color: #ba2919;
@@ -221,7 +252,11 @@ span.trash10 {
   float: right;
   margin: 2px;
 }
-.ssi-upImgTd{position: relative}
+
+.ssi-upImgTd {
+  position: relative
+}
+
 .ssi-upImgTd .fa-spin {
   display: inline-block;
   position: absolute;
@@ -260,15 +295,17 @@ span.trash10 {
   margin-top: 0;
   opacity: 0.6;
 }
+
 .ssi-uploaderNP {
   position: relative;
 
-&::after{
-  content:' ';
-  display:block;
-  clear:both;
+  &::after {
+    content: ' ';
+    display: block;
+    clear: both;
+  }
 }
-}
+
 .ssi-uploadDetails {
   width: 180px;
   max-height: 0;
@@ -280,9 +317,11 @@ span.trash10 {
   overflow: hidden;
   padding-right: 2px;
 }
-.ssi-uploadBoxWrapper{
+
+.ssi-uploadBoxWrapper {
   float: left;
 }
+
 .ssi-uploadBoxOpened {
   max-height: 200px;
   z-index: 2000;
@@ -370,19 +409,22 @@ table.ssi-fileList tr.ssi-space > td {
 .ssi-btnIn {
   float: left;
 }
-.ssi-ieCompatibilityForm{
+
+.ssi-ieCompatibilityForm {
   display: none;
 }
+
 span.ssi-InputLabel input[type="file"] {
   display: none;
 }
 
 .ssi-abortUpload {
-  padding:0;
-  .ban7w{
+  padding: 0;
+  .ban7w {
     margin: 0;
   }
 }
+
 .ssi-removeBtnNP {
   border: none;
   color: #ff696d;
@@ -390,6 +432,7 @@ span.ssi-InputLabel input[type="file"] {
   margin: 0;
   padding: 0;
 }
+
 .ssi-InputLabel.disabled, .ssi-InputLabel.disabled:hover, .ssi-InputLabel.disabled:active {
   cursor: not-allowed;
   background: #5cb85c;
@@ -403,6 +446,7 @@ span.ssi-InputLabel input[type="file"] {
 .ssi-boxHover {
   cursor: pointer;
 }
+
 .ssi-upI.imgTd {
   position: relative;
 }
