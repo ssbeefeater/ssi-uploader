@@ -97,8 +97,6 @@
             thisS.clear();
         });
 
-        var $tooltip;
-
         $uploadBox.on('mouseenter', '.ssi-statusLabel', function (e) {
             var $eventTarget = $(e.currentTarget);
             var title = $eventTarget.attr('data-status');
@@ -188,12 +186,10 @@
         if ($target.hasClass('ssi-noPreviewSubMessage')) {
             offset = 23;
         }
-        $toolTip.css({top: $target.position().top - $toolTip.height() + offset, left: $target.position().left})
+        $toolTip.css({top: $target.position().top - $toolTip.height() + offset, left: $target.position().left-$toolTip.width()/2})
             .removeClass('ssi-fadeOut');
-
         return $toolTip;
     }
-
     Ssi_upload.prototype.abortAll = function () {
         for (var i = 0; i < this.uploadList.length; i++) { //all element in the list
             if (typeof this.uploadList[i] === 'object') {// check if not deleted
@@ -822,7 +818,6 @@
             } else {
                 console.log('The targeted element is not file input.')
             }
-
         });
     };
     //functions
