@@ -628,7 +628,7 @@
                     try {
                         thisS.options.onEachUpload({//and return some info
                             uploadStatus: dataType,
-                            responseMsg:title,
+                            responseMsg:data,
                             name: thisS.toUpload[ii].name,
                             size: (thisS.toUpload[ii].size / 1024).toFixed(2),
                             type: thisS.toUpload[ii].type
