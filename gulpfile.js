@@ -3,7 +3,7 @@
 var gulp = require('gulp');
 var concat = require('gulp-concat');
 var source = require('vinyl-source-stream');
-var closureCompiler = require('gulp-closure-compiler');
+var closure = require('gulp-closure-compiler-service');
 var sass = require('gulp-sass');
 var sourcemaps = require('gulp-sourcemaps');
 var autoprefixer = require('gulp-autoprefixer');
@@ -54,14 +54,12 @@ gulp.task('html', function () {
 });
 gulp.task('compile', function () {
     gulp.src(config.paths.ssi_uploaderJs)
-     .pipe(closureCompiler({
-         compilerPath: './node_modules/google-closure-compiler/compiler.jar',
-         fileName: 'ssi-uploader.min.js',
-         compilerFlags: {
-             create_source_map: config.paths.dist + '/ssi-uploader/js/ssi-uploader.min.js.map'
-         }
-     })).on('error', console.error.bind(console))
-     .pipe(gulp.dest(config.paths.dist + '/ssi-uploader/js/'));
+        .pipe(sourcemaps.init())
+        .pipe(closure()).on('error', console.error.bind(console))
+        .pipe(rename({suffix: '.min'}))
+        .pipe(sourcemaps.write('./'))
+        .pipe(gulp.dest(config.paths.dist + '/ssi-uploader/js/'))
+        .on('error', console.error.bind(console));
 });
 gulp.task('js', function () {
     gulp.src(config.paths.ssi_uploaderJs)

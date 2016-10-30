@@ -551,11 +551,11 @@
                         thisS.totalProgress[ii] = '';
                         thisS.inProgress--;
                         $clearBtn.prop("disabled", false);
-
                         if (typeof thisS.options.onEachUpload === 'function') {//execute the onEachUpload callback
                             try {
                                 thisS.options.onEachUpload({//and return some info
                                     uploadStatus: 'error',
+                                    responseMsg:thisS.language.serverError,
                                     name: thisS.toUpload[ii].name,
                                     size: (thisS.toUpload[ii].size / 1024).toFixed(2),
                                     type: thisS.toUpload[ii].type
@@ -565,7 +565,6 @@
                                     console.log('There is an error in onEachUpload callback. File name:' + thisS.toUpload[ii].name);
                                     console.log(err);
                                 }
-
                             }
                         }
                         if (getCompleteStatus(thisS)) {//if no more elements in progress
@@ -629,6 +628,7 @@
                     try {
                         thisS.options.onEachUpload({//and return some info
                             uploadStatus: dataType,
+                            responseMsg:title,
                             name: thisS.toUpload[ii].name,
                             size: (thisS.toUpload[ii].size / 1024).toFixed(2),
                             type: thisS.toUpload[ii].type
