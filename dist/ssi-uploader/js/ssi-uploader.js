@@ -25,6 +25,7 @@
         this.pending = 0;
         this.inProgress = 0;
         this.currentListLength = 0;
+        this.inputName='';
         this.init(element);
     };
     Ssi_upload.prototype.init = function (element) {
@@ -58,10 +59,10 @@
         }
         var thisS = this;
         var $input = $chooseBtn.find(".ssi-uploadInput");
+        this.inputName=$input.attr('name')||'files';
         $chooseBtn.find('button').click(function () {
             $input.trigger('click');
         });
-
         $input.on('change', function () { //choose files
             thisS.toUploadFiles(this.files);
             $input.val('');
@@ -453,7 +454,7 @@
             while (thisS.toUpload[i] === null || thisS.toUpload[i] === '') { // do it until you find a file
                 i++;
             }
-            formData.append('files[]', thisS.toUpload[i]);//append the first file to the form data
+            formData.append(thisS.inputName, thisS.toUpload[i]);//append the first file to the form data
             $.each(this.options.data, function (key, value) {// append all extra data
                 formData.append(key, value);
             });
@@ -661,7 +662,7 @@
                 $.each(thisS.options.data, function (key, value) {
                     formData.append(key, value);
                 });
-                formData.append('files[]', thisS.toUpload[i]);
+                formData.append(thisS.inputName, thisS.toUpload[i]);
                 ajaxLoopRequest(formData, i);
             }
         }

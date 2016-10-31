@@ -9,6 +9,7 @@ An awesome jquery uploader.
 
 [See documentation](http://ssbeefeater.github.io/#ssi-uploader/documentation)
 
+[Changelog](https://github.com/ssbeefeater/ssi-uploader/commit/33f8612ec276ad4ddc8c4a7ddd7e74e02abf09e9)
 
 ---
 
