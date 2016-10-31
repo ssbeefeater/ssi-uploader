@@ -60,7 +60,8 @@
         var thisS = this;
         var $input = $chooseBtn.find(".ssi-uploadInput");
         this.inputName=$input.attr('name')||'files';
-        $chooseBtn.find('button').click(function () {
+        $chooseBtn.find('button').click(function (e) {
+            e.preventDefault();
             $input.trigger('click');
         });
         $input.on('change', function () { //choose files
