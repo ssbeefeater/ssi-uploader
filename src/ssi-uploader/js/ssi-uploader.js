@@ -168,11 +168,11 @@
             thisS.abort(index); // abort request
         });
 //----------------------------UPLOADFILES------------------------------------
-        $uploadBtn.click(function () {// upload the files
+        $uploadBtn.click(function (e) {// upload the files
             e.preventDefault();
             thisS.uploadFiles();
         });
-        $abortBtn.click(function () { // abort all requests
+        $abortBtn.click(function (e) { // abort all requests
             e.preventDefault();
             thisS.abortAll();
         });
