@@ -919,6 +919,27 @@
             pending: 'Εn attendant',
             completed: 'Terminé',
             inProgress: 'En cours'
+        },
+        zh_CN: {
+            success: '上传成功',
+            sucUpload: '上传成功',
+            chooseFiles: '选择文件',
+            uploadFailed: '上传失败',
+            serverError: '服务器内部错误',
+            error: '错误',
+            abort: '中止',
+            aborted: '已中止',
+            files: '文件',
+            upload: '上传',
+            clear: '清空',
+            drag: '将图片拖拽至此并释放',
+            sizeError: '$1 超出了 $2 的大小限制',
+            extError: '$1 类型不被支持',
+            someErrorsOccurred: '发生了一些错误!',
+            wentWrong: '出问题了哦!',
+            pending: '等待上传',
+            completed: '完成',
+            inProgress: '正在上传'
         }
     };
 
