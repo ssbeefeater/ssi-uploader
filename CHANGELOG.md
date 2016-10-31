@@ -26,5 +26,6 @@ $(input).ssi_uploader({
     if(fileInfo.name=='noImage.jpg'){
         throw new Error('custom message');
     }
+  }
 })
  ```
