@@ -95,7 +95,8 @@
             })
         }
 
-        $clearBtn.click(function () { //choose files completed and pending files
+        $clearBtn.click(function (e) { //choose files completed and pending files
+            e.preventDefault();
             thisS.clear();
         });
 
@@ -127,6 +128,7 @@
         });
 
         $uploadBox.on('click', '.ssi-removeBtn', function (e) { //remove the file from list
+            e.preventDefault();
             var $currentTarget = $(e.currentTarget);
             var index = $currentTarget.data('delete'); //get file's index
             thisS.pending--; //reduce pending number by 1
@@ -160,15 +162,18 @@
             }
         });
         $uploadBox.on('click', '.ssi-abortUpload', function (e) {//abort one element
+            e.preventDefault();
             var $eventTarget = $(e.currentTarget);
             var index = $eventTarget.data('delete');// get the element id
             thisS.abort(index); // abort request
         });
 //----------------------------UPLOADFILES------------------------------------
         $uploadBtn.click(function () {// upload the files
+            e.preventDefault();
             thisS.uploadFiles();
         });
         $abortBtn.click(function () { // abort all requests
+            e.preventDefault();
             thisS.abortAll();
         });
 
