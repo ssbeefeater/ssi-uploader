@@ -609,7 +609,6 @@
                         msg = thisS.language.success;
                         spanClass = 'check';
                         thisS.successfulUpload++;// one more successful upload
-                        console.log(data);
                     } else {
                         uploadBar.addClass('ssi-canceledProgressBar');
                         if (thisS.options.preview) {
