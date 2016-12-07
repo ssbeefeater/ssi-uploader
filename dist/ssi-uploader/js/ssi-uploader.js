@@ -25,7 +25,7 @@
         this.pending = 0;
         this.inProgress = 0;
         this.currentListLength = 0;
-        this.inputName='';
+        this.inputName = '';
         this.init(element);
     };
     Ssi_upload.prototype.init = function (element) {
@@ -59,7 +59,7 @@
         }
         var thisS = this;
         var $input = $chooseBtn.find(".ssi-uploadInput");
-        this.inputName=$input.attr('name')||'files';
+        this.inputName = $input.attr('name') || 'files';
         $chooseBtn.find('button').click(function (e) {
             e.preventDefault();
             $input.trigger('click');
@@ -111,18 +111,6 @@
         $uploadBox.on('mouseenter', '#ssi-fileNumber', function (e) {
             var $eventTarget = $(e.currentTarget);
 
-            /*  this.totalFilesLength = 0;
-             this.successfulUpload = 0;
-             this.aborted = 0;
-             this.abortedWithError = 0;
-             this.pending = 0;
-             this.inProgress = 0;
-             this.currentListLength = 0;
-
-             thisS.successfulUpload = 0;
-             thisS.aborted = 0;
-             thisS.abortedWithError = 0;
-             */
             var message = " " + thisS.language.pending + ": " + thisS.pending + " <br> " + thisS.language.completed + ": " + (thisS.successfulUpload + thisS.aborted + thisS.abortedWithError) + "<br> " + thisS.language.inProgress + ": " + thisS.inProgress;
             tooltip($eventTarget, message, thisS);
         });
@@ -193,10 +181,14 @@
         if ($target.hasClass('ssi-noPreviewSubMessage')) {
             offset = 23;
         }
-        $toolTip.css({top: $target.position().top - $toolTip.height() + offset, left: $target.position().left-$toolTip.width()/2})
+        $toolTip.css({
+            top: $target.position().top - $toolTip.height() + offset,
+            left: $target.position().left - $toolTip.width() / 2
+        })
             .removeClass('ssi-fadeOut');
         return $toolTip;
     }
+
     Ssi_upload.prototype.abortAll = function () {
         for (var i = 0; i < this.uploadList.length; i++) { //all element in the list
             if (typeof this.uploadList[i] === 'object') {// check if not deleted
@@ -562,7 +554,7 @@
                             try {
                                 thisS.options.onEachUpload({//and return some info
                                     uploadStatus: 'error',
-                                    responseMsg:thisS.language.serverError,
+                                    responseMsg: thisS.language.serverError,
                                     name: thisS.toUpload[ii].name,
                                     size: (thisS.toUpload[ii].size / 1024).toFixed(2),
                                     type: thisS.toUpload[ii].type
@@ -593,20 +585,20 @@
                     var valData = thisS.options.responseValidation;
                     if (typeof valData.validationKey === 'object' && valData.resultKey == 'validationKey') {
                         if (data.hasOwnProperty(valData.validationKey.success)) {
-                            cb(true);
+                            cb(true, data[valData.validationKey.success]);
                         } else {
                             cb(false, data[valData.validationKey.error]);
                         }
                     } else {
                         if (data[valData.validationKey] == valData.success) {
-                            cb(true);
+                            cb(true, data[valData.resultKey]);
                         } else {
                             cb(false, data[valData.resultKey]);
                         }
                     }
                 } else {
                     if (jqXHR.status == 200) {
-                        cb(true);
+                        cb(true, data);
                     } else {
                         cb(false, data);
                     }
@@ -617,14 +609,15 @@
                         msg = thisS.language.success;
                         spanClass = 'check';
                         thisS.successfulUpload++;// one more successful upload
+                        console.log(data);
                     } else {
                         uploadBar.addClass('ssi-canceledProgressBar');
                         if (thisS.options.preview) {
                             msg = thisS.language.error;
                         }
-                        title = data;
                         thisS.abortedWithError++;
                     }
+                    title = data;
                 }
 
                 if (!thisS.options.preview) {
@@ -635,7 +628,7 @@
                     try {
                         thisS.options.onEachUpload({//and return some info
                             uploadStatus: dataType,
-                            responseMsg:data,
+                            responseMsg: title,
                             name: thisS.toUpload[ii].name,
                             size: (thisS.toUpload[ii].size / 1024).toFixed(2),
                             type: thisS.toUpload[ii].type

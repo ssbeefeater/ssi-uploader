@@ -61,11 +61,19 @@
             }
         }
     };
+
     $('#ssi-upload').ssi_uploader({
-        url: 'uploadAction.php',
+        url: 'http://192.168.33.10/api/',
         maxFileSize: 6,
+        responseValidation:{
+            validationKey: {
+                success: 'success',
+                error: 'error'
+            },
+            resultKey: 'validationKey'
+        },
         allowed: ['jpg', 'gif', 'txt', 'png', 'pdf']
-        ,onEachUpload:function(file){alert(file.response)}
+        ,onEachUpload:function(file){console.log(file)}
     });
     $('#ssi-upload2').ssi_uploader({url: 'uploadAction.php', preview: false});
     $('#ssi-upload3').ssi_uploader({url: 'uploadAction.php', dropZone: false});

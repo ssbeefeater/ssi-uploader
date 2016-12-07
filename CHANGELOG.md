@@ -1,3 +1,7 @@
+## ssi-uploader v1.3.1-beta
+ * Now you can display message from server even if the response is success.
+
+ 
 ## ssi-uploader v1.3.0-beta
  * Now supports English(en), Greek(gr), French(fr) and Chinese Simplified(zh_CN).
  * The input name is no more "files[]" but you need to add it in your input element.If no name is set, then the input name will be "files"
