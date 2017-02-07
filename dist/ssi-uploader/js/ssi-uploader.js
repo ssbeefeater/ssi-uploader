@@ -158,6 +158,8 @@
 //----------------------------UPLOADFILES------------------------------------
         $uploadBtn.click(function (e) {// upload the files
             e.preventDefault();
+             console.log(thisS.toUpload)
+             console.log(thisS.imgNames)
             thisS.uploadFiles();
         });
         $abortBtn.click(function (e) { // abort all requests
@@ -266,7 +268,8 @@
             this.options.errorHandler.method(errorMessage, this.options.errorHandler.error);
         }
         function setupReader() {
-            var index = thisS.totalFilesLength + thisS.pending;
+            var index = thisS.imgNames.length;
+            console.log(thisS.pending)
             if (index === 0) {//do it only the first time
                 if (thisS.options.preview) {
                     if (!thisS.options.dropZone) {
@@ -609,7 +612,6 @@
                         msg = thisS.language.success;
                         spanClass = 'check';
                         thisS.successfulUpload++;// one more successful upload
-                        console.log(data);
                     } else {
                         uploadBar.addClass('ssi-canceledProgressBar');
                         if (thisS.options.preview) {
