@@ -155,11 +155,9 @@
             var index = $eventTarget.data('delete');// get the element id
             thisS.abort(index); // abort request
         });
-//----------------------------UPLOADFILES------------------------------------
+        //----------------------------UPLOADFILES------------------------------------
         $uploadBtn.click(function (e) {// upload the files
             e.preventDefault();
-             console.log(thisS.toUpload)
-             console.log(thisS.imgNames)
             thisS.uploadFiles();
         });
         $abortBtn.click(function (e) { // abort all requests
@@ -171,8 +169,8 @@
     function tooltip($target, text, thisS) {
         $target = $($target);
         text = text || $target.data('title');
-        if (!text)text = $target.attr('title');
-        if (!text)return;
+        if (!text) text = $target.attr('title');
+        if (!text) return;
         var $toolTip = $('<div class="ssi-fadeOut ssi-fade ssi-tooltipText">'
             + text +
             '</div>').appendTo(thisS.$element);
@@ -269,7 +267,6 @@
         }
         function setupReader() {
             var index = thisS.imgNames.length;
-            console.log(thisS.pending)
             if (index === 0) {//do it only the first time
                 if (thisS.options.preview) {
                     if (!thisS.options.dropZone) {
@@ -353,7 +350,7 @@
         thisS.successfulUpload = 0;
         thisS.aborted = 0;
         thisS.abortedWithError = 0;
-        if (!thisS.options.preview)$completed.prev('tr').remove();
+        if (!thisS.options.preview) $completed.prev('tr').remove();
         $completed.remove();
     };
     var clearPending = function (thisS) {//clear all pending files
@@ -368,7 +365,7 @@
         thisS.toUpload.splice(-thisS.pending, thisS.pending);
         thisS.imgNames.splice(-thisS.pending, thisS.pending);
         thisS.pending = 0;
-        if (!thisS.options.preview)$pending.prev('tr').remove();
+        if (!thisS.options.preview) $pending.prev('tr').remove();
         $pending.remove();
     };
 
@@ -498,7 +495,7 @@
                     return xhr;
                 },
                 async: true,
-                beforeSend: function (xhr) {
+                beforeSend: function (xhr, settings) {
                     thisS.uploadList[ii] = xhr;
                     $uploadBtn.find('#ssi-up_loading') //add spiner to uploadbutton
                         .html('<i class="fa fa-spinner fa-pulse"></i>');
@@ -509,7 +506,7 @@
                                 type: thisS.toUpload[ii].type,
                                 size: (thisS.toUpload[ii].size / 1024).toFixed(2)
 
-                            }, xhr);
+                            }, xhr, settings);
                         } catch (err) {
                             if (err.name == 'Error') {
                                 thisS.abort(ii, undefined, err.message);//call the abort function
@@ -835,10 +832,10 @@
         return this.split('.').pop().toLowerCase();
     };
     var cutFileName = function (word, ext, maxLength) {//shorten the name
-        if (typeof ext === 'undefined')ext = '';
-        if (typeof maxLength === 'undefined')maxLength = 10;
+        if (typeof ext === 'undefined') ext = '';
+        if (typeof maxLength === 'undefined') maxLength = 10;
         var min = 4;
-        if (maxLength < min)return;
+        if (maxLength < min) return;
         var extLength = ext.length;
         var wordLength = word.length;
         if ((wordLength - 2) > maxLength) {
