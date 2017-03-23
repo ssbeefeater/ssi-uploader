@@ -631,7 +631,7 @@
                             name: thisS.toUpload[ii].name,
                             size: (thisS.toUpload[ii].size / 1024).toFixed(2),
                             type: thisS.toUpload[ii].type
-                        });
+                        }, data);
                     } catch (err) {
                         console.log('There is an error in onEachUpload callback');
                         console.log(err);
