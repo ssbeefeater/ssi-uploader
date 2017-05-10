@@ -67,10 +67,10 @@
                     '<tr><td><button data-delete="' + index + '" class=" ssi-button error ssi-removeBtn"><span class="trash10 trash"></span></button></td></tr>' +
                     '<tr><td>' + filename + '</td></tr></table>'
             };
-
             for (var i = 0; i < this.options.initImgArray.length; i++) {
                 if (this.options.initImgArray[i] !== null) {
-                    $uploadBox.append(getTemplate(i,this.options.initImgNameArray[i]));
+                    var temp = this.options.initImgArray[i].split('/');
+                    $uploadBox.append(getTemplate(i,temp[temp.length - 1]));
                     $uploadBox.find("#ssi-uploadProgress" + i).parents('table.ssi-imgToUploadTable')
                         .find('.ssi-imgToUpload')
                         .attr('src', this.options.initImgArray[i]) //set src of the image
@@ -812,7 +812,6 @@
             maxFileSize: 2,
             ajaxOptions: {},
             initImgArray :{},//add init Img Array
-            initImgNameArray :{},//add init Img name Array
             onUpload: function () {
             },
             onEachUpload: function () {
