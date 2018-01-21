@@ -12,8 +12,10 @@
 <table class="ie table">
     <tr>
         <td>Basic:
-
-            <input type="file" name="ssi-upload" multiple id="ssi-upload"/>
+            <form id="myForm" action="http://localhost:3300/upload" method="post">
+                <input type="file" name="ssi-upload" multiple id="ssi-upload"/>
+                <button id="upBtn">Up</button>
+            </form>
         </td>
     </tr>
     <tr>
@@ -61,11 +63,23 @@
             }
         }
     };
-    $('#ssi-upload').ssi_uploader({
+    var uploader = $('#ssi-upload').ssi_uploader({
         url: 'uploadAction.php',
         maxFileSize: 6,
         allowed: ['jpg', 'gif', 'txt', 'png', 'pdf']
         ,onEachUpload:function(file){console.log(file)}
+    });
+
+    // $('#upBtn').click(function(){
+    //     $('#formExample').submit();
+    //     console.log(uploader.data('ssi_upload').uploadFiles());
+    // });
+
+    $( "#myForm" ).on( "submit", function( event ) {
+        event.preventDefault();
+        uploader.data('ssi_upload').uploadFiles();
+        uploader.on('onUpload.ssi-uploader',function(){console.log('The upload process finished.')});
+        this.submit()
     });
     $('#ssi-upload2').ssi_uploader({url: 'uploadAction.php', preview: false});
     $('#ssi-upload3').ssi_uploader({url: 'uploadAction.php', dropZone: false});

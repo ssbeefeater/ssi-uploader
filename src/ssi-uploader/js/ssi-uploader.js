@@ -501,14 +501,15 @@
                     thisS.uploadList[ii] = xhr;
                     $uploadBtn.find('#ssi-up_loading') //add spiner to uploadbutton
                         .html('<i class="fa fa-spinner fa-pulse"></i>');
+                    var fileInfo = {
+                        name: thisS.toUpload[ii].name,//send some info of the file
+                        type: thisS.toUpload[ii].type,
+                        size: (thisS.toUpload[ii].size / 1024).toFixed(2)
+                    };
                     if (typeof thisS.options.beforeEachUpload === 'function') {
                         try {
-                            var msg = thisS.options.beforeEachUpload({// execute the beforeEachUpload callback and save the returned value
-                                name: thisS.toUpload[ii].name,//send some info of the file
-                                type: thisS.toUpload[ii].type,
-                                size: (thisS.toUpload[ii].size / 1024).toFixed(2)
-
-                            }, xhr, settings);
+                            // execute the beforeEachUpload callback and save the returned value
+                            var msg = thisS.options.beforeEachUpload(fileInfo, xhr, settings);
                         } catch (err) {
                             if (err.name == 'Error') {
                                 thisS.abort(ii, undefined, err.message);//call the abort function
@@ -522,7 +523,7 @@
                             return;
                         }
                     }
-                    thisS.$element.find('input.ssi-uploadInput').trigger('beforeEachUpload.ssi-uploader');
+                    thisS.$element.find('input.ssi-uploadInput').trigger('beforeEachUpload.ssi-uploader',[fileInfo]);
                     if (xhr.status === 0) {
                         if (xhr.statusText === 'canceled') {//if user used beforeEachUpload to abort the request
                             if (typeof msg === 'undefined') {//if no message
@@ -625,21 +626,22 @@
                     msg = '<span class="' + spanClass + '7"></span>';
                 }
                 setElementMessage(thisS, ii, dataType, msg, title);
+                var fileInfo = {//and return some info
+                    uploadStatus: dataType,
+                    responseMsg: title,
+                    name: thisS.toUpload[ii].name,
+                    size: (thisS.toUpload[ii].size / 1024).toFixed(2),
+                    type: thisS.toUpload[ii].type
+                };
                 if (typeof thisS.options.onEachUpload === 'function') {//execute the onEachUpload callback
                     try {
-                        thisS.options.onEachUpload({//and return some info
-                            uploadStatus: dataType,
-                            responseMsg: title,
-                            name: thisS.toUpload[ii].name,
-                            size: (thisS.toUpload[ii].size / 1024).toFixed(2),
-                            type: thisS.toUpload[ii].type
-                        }, data);
+                        thisS.options.onEachUpload(fileInfo, data);
                     } catch (err) {
                         console.log('There is an error in onEachUpload callback');
                         console.log(err);
                     }
                 }
-                thisS.$element.find('input.ssi-uploadInput').trigger('onEachUpload.ssi-uploader');
+                thisS.$element.find('input.ssi-uploadInput').trigger('onEachUpload.ssi-uploader',[fileInfo]);
                 thisS.inProgress--;//one less in progress upload
                 $clearBtn.prop("disabled", false);
                 if (getCompleteStatus(thisS)) {//if no more files in progress
@@ -753,7 +755,7 @@
         }
         if (typeof thisS.options.onUpload === 'function') {
             try {
-                thisS.options.onUpload();//execute the on Upload callback
+                thisS.options.onUpload(type);//execute the on Upload callback
             } catch (err) {
                 if (!thisS.options.ignoreCallbackErrors) {
                     console.log('There is an error in onUpload callback');
@@ -761,7 +763,7 @@
                 }
             }
         }
-        thisS.$element.find('input.ssi-uploadInput').trigger('onUpload.ssi-uploader');
+        thisS.$element.find('input.ssi-uploadInput').trigger('onUpload.ssi-uploader',[type]);
         var $uploadBtn = thisS.$element.find('#ssi-uploadBtn');
         thisS.$element.find('#ssi-clearBtn').prop("disabled", false);
         $uploadBtn.prop("disabled", false)

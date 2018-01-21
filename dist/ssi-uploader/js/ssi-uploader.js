@@ -753,7 +753,7 @@
         }
         if (typeof thisS.options.onUpload === 'function') {
             try {
-                thisS.options.onUpload();//execute the on Upload callback
+                thisS.options.onUpload(type);//execute the on Upload callback
             } catch (err) {
                 if (!thisS.options.ignoreCallbackErrors) {
                     console.log('There is an error in onUpload callback');
@@ -761,7 +761,7 @@
                 }
             }
         }
-        thisS.$element.find('input.ssi-uploadInput').trigger('onUpload.ssi-uploader');
+        thisS.$element.find('input.ssi-uploadInput').trigger('onUpload.ssi-uploader',[type]);
         var $uploadBtn = thisS.$element.find('#ssi-uploadBtn');
         thisS.$element.find('#ssi-clearBtn').prop("disabled", false);
         $uploadBtn.prop("disabled", false)
