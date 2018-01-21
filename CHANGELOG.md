@@ -1,3 +1,8 @@
+## ssi-uploader v1.3.9-beta
+ * Fix the clear button in no preview mode
+ * Add inForm(boolean) option that allows to send the files in form.
+ 
+
 ## ssi-uploader v1.3.1-beta
  * Now you can display message from server even if the response is success.
 

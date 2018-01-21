@@ -1,6 +1,3 @@
-/*
- * error:an teleiwsei to upload kai iparxei ena sti lista pou den exei patithei
- * */
 
 (function (root, factory) {
     //@author http://ifandelse.com/its-not-hard-making-your-library-support-amd-and-commonjs/
@@ -41,7 +38,9 @@
         var $clearBtn = $('<button id="ssi-clearBtn" class="ssi-hidden ssi-button info" >' + this.language.clear +
             '</button>');
         var $abortBtn = $('<button id="ssi-abortBtn" class="ssi-button error ssi-cancelAll ssi-hidden" ><span class="inBtn">' + this.language.abort + ' </span></button>');
-
+        if(this.options.inForm){
+            $uploadBtn.hide();
+        }
         this.$element.append($('<div class="ssi-buttonWrapper">').append($chooseBtn, $abortBtn, $uploadBtn, $clearBtn));
         var $uploadBox;
         if (!this.options.preview) {
@@ -66,7 +65,9 @@
         });
         $input.on('change', function () { //choose files
             thisS.toUploadFiles(this.files);
-            $input.val('');
+            if(!thisS.options.inForm){
+                $input.val('');
+            }
         });
         //drag n drop
         if (thisS.options.dropZone) {
@@ -324,6 +325,7 @@
                     j++;
                 }
             } else {
+                $clearBtn.prop('disabled', false);
                 thisS.$element.find('.ssi-namePreview').html((index === 0 ? cutFileName(filename, ext, 13) : (thisS.currentListLength + 1) + ' ' + thisS.language.files));//set name preview
                 $fileList.append('<tr class="ssi-space"><td></td></tr>' +//append files element to dom
                     '<tr class="ssi-toUploadTr ssi-pending"><td><div id="ssi-uploadProgress' + index + '" class="ssi-hidden ssi-uploadProgress ssi-uploadProgressNoPre"></div>' +
@@ -788,6 +790,7 @@
             responseValidation: false,
             ignoreCallbackErrors: false,
             maxFileSize: 2,
+            inForm: false,
             ajaxOptions: {},
             onUpload: function () {
             },
