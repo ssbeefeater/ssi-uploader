@@ -25,7 +25,6 @@
 }
 
 .ssi-tooltipText.ssi-fade {
-  -webkit-transition: opacity .8s;
   transition: opacity .8s;
 }
 
@@ -166,7 +165,6 @@
   font-size: 15px;
   vertical-align: middle;
   line-height: 30px;
-  -webkit-transition: height .3s;
   transition: height .3s;
   background: #FFFFFF;
   padding-right: 1px;
@@ -326,7 +324,6 @@ span.trash10 {
   width: 0;
   height: 35px;
   background: #5cb85c;
-  -webkit-transition: width .3s;
   transition: width .3s;
   opacity: 0.6;
 }
@@ -342,7 +339,6 @@ span.trash10 {
   width: 0;
   height: 10px;
   background: #5cb85c;
-  -webkit-transition: width .3s;
   transition: width .3s;
 }
 
@@ -369,7 +365,6 @@ span.trash10 {
   top: 37px;
   background: #FFFFFF;
   position: absolute;
-  -webkit-transition: max-height .2s ease-out;
   transition: max-height .2s ease-out;
   border-radius: 3px;
   overflow: hidden;
@@ -385,7 +380,6 @@ span.trash10 {
   z-index: 2000;
   overflow: auto;
   border: 0.1mm solid #dcdcdc;
-  -webkit-transition: max-height .5s ease-out;
   transition: max-height .5s ease-out;
 }
 
@@ -417,7 +411,6 @@ table.ssi-fileList tr.ssi-space > td {
 .ssi-uploadProgress.hide {
   margin-top: 0;
   opacity: 0;
-  -webkit-transition: opacity 1.3s;
   transition: opacity 1.3s;
 }
 
