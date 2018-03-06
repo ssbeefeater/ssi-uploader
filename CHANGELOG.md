@@ -1,16 +1,20 @@
+## ssi-uploader v1.3.11-beta
+ * Add allowDuplicates option so you can upload files with the same name.
+
+
 ## ssi-uploader v1.3.9-beta
  * Fix the clear button in no preview mode
  * Add inForm(boolean) option that allows to send the files in form.
- 
+
 
 ## ssi-uploader v1.3.1-beta
  * Now you can display message from server even if the response is success.
 
- 
+
 ## ssi-uploader v1.3.0-beta
  * Now supports English(en), Greek(gr), French(fr) and Chinese Simplified(zh_CN).
  * The input name is no more "files[]" but you need to add it in your input element.If no name is set, then the input name will be "files"
- 
+
   ```javascript
 //html
 <input type="file" id="ssi-uploader" name="myInputName">
@@ -28,7 +32,7 @@ $_FILES ['myInputName'] ['name'];
  * Fix a bug in multiple files upload.
  * Change the tooltip logic and some css.
  * New method to throw custom error message in BeforeEachUpload callback by throwing an Error.
- 
+
  ```javascript
 $(input).ssi_uploader({
   url:"my/url/upload.php",
