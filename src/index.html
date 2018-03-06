@@ -63,23 +63,27 @@
             }
         }
     };
-    var uploader = $('#ssi-upload').ssi_uploader({
-        url: 'uploadAction.php',
-        maxFileSize: 6,
-        allowed: ['jpg', 'gif', 'txt', 'png', 'pdf']
-        ,onEachUpload:function(file){console.log(file)}
+
+    // option 1
+
+
+    $('#ssi-upload').ssi_uploader({
+        url: 'http://localhost:3300/upload',
+        inForm:true
     });
 
-    // $('#upBtn').click(function(){
-    //     $('#formExample').submit();
-    //     console.log(uploader.data('ssi_upload').uploadFiles());
-    // });
+    // option 2
+
+    var uploader = $('#ssi-upload').ssi_uploader({
+        url: 'http://localhost:3300/upload'
+    });
 
     $( "#myForm" ).on( "submit", function( event ) {
         event.preventDefault();
         uploader.data('ssi_upload').uploadFiles();
-        uploader.on('onUpload.ssi-uploader',function(){console.log('The upload process finished.')});
-        this.submit()
+        uploader.on('onUpload.ssi-uploader',function(){
+            $( "#myForm" ).submit();
+        });
     });
     $('#ssi-upload2').ssi_uploader({url: 'uploadAction.php', preview: false});
     $('#ssi-upload3').ssi_uploader({url: 'uploadAction.php', dropZone: false});
