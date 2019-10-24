@@ -418,6 +418,14 @@
         }
 
     };
+
+    Ssi_upload.prototype.appendFileToFormData = function (formData, file) {
+        formData.append(this.inputName, file);//append the first file to the form data
+        $.each(this.options.data, function (key, value) {// append all extra data
+            formData.append(key, value);
+        });
+        this.$element.find('input.ssi-uploadInput').trigger('beforeUpload.ssi-uploader');
+    }
     Ssi_upload.prototype.uploadFiles = function () {// upload the pending files
         if (this.pending > 0) {
             if (typeof this.options.beforeUpload === 'function') {
@@ -451,15 +459,33 @@
             if (this.inProgress === this.currentListLength) {// disable the clear button if no items in list we can be remove
                 $clearBtn.prop("disabled", true);
             }
+
             while (thisS.toUpload[i] === null || thisS.toUpload[i] === '') { // do it until you find a file
                 i++;
             }
-            formData.append(thisS.inputName, thisS.toUpload[i]);//append the first file to the form data
-            $.each(this.options.data, function (key, value) {// append all extra data
-                formData.append(key, value);
-            });
-            thisS.$element.find('input.ssi-uploadInput').trigger('beforeUpload.ssi-uploader');
-            ajaxLoopRequest(formData, i);// make the request
+            var file = thisS.toUpload[i]
+            if (typeof this.options.transformFile === 'function') {
+                try {
+                    file = this.options.transformFile(thisS.toUpload[i]);// execute the transformFile
+                    if (file instanceof Promise) {
+                        file.then(function (file) {
+                            thisS.appendFileToFormData(formData, file)
+                            ajaxLoopRequest(formData, i)
+                        })
+                    } else {
+                        thisS.appendFileToFormData(formData, file)
+                        ajaxLoopRequest(formData, i)
+                    }
+                } catch (err) {
+                    if (!this.options.ignoreCallbackErrors) {
+                        console.error('There is an error in transformFile');
+                        return console.error(err);
+                    }
+                }
+            } else {
+                thisS.appendFileToFormData(formData, file)
+                ajaxLoopRequest(formData, i)
+            }
         }
 
         //--------------start of ajax request-----------------------

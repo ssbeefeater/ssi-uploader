@@ -38,7 +38,7 @@
         var $clearBtn = $('<button id="ssi-clearBtn" class="ssi-hidden ssi-button info" >' + this.language.clear +
             '</button>');
         var $abortBtn = $('<button id="ssi-abortBtn" class="ssi-button error ssi-cancelAll ssi-hidden" ><span class="inBtn">' + this.language.abort + ' </span></button>');
-        if(this.options.inForm){
+        if (this.options.inForm) {
             $uploadBtn.hide();
         }
         this.$element.append($('<div class="ssi-buttonWrapper">').append($chooseBtn, $abortBtn, $uploadBtn, $clearBtn));
@@ -65,7 +65,7 @@
         });
         $input.on('change', function () { //choose files
             thisS.toUploadFiles(this.files);
-            if(!thisS.options.inForm){
+            if (!thisS.options.inForm) {
                 $input.val('');
             }
         });
@@ -243,7 +243,7 @@
                     toUploadLength--;
                 }
                 sizeErrors.push(cutFileName(file.name, ext, 15));//register a size error
-            } else if ($.inArray(file.name, this.imgNames) === -1) {// if the file is not already in the list
+            } else if (this.options.allowDuplicates || $.inArray(file.name, this.imgNames) === -1) {// if the file is not already in the list
                 $uploadBtn.prop("disabled", false);
                 setupReader(file);
                 this.pending++; // we have one more file that is pending to be uploaded
@@ -418,6 +418,14 @@
         }
 
     };
+
+    Ssi_upload.prototype.appendFileToFormData = function (formData, file) {
+        formData.append(this.inputName, file);//append the first file to the form data
+        $.each(this.options.data, function (key, value) {// append all extra data
+            formData.append(key, value);
+        });
+        this.$element.find('input.ssi-uploadInput').trigger('beforeUpload.ssi-uploader');
+    }
     Ssi_upload.prototype.uploadFiles = function () {// upload the pending files
         if (this.pending > 0) {
             if (typeof this.options.beforeUpload === 'function') {
@@ -451,15 +459,34 @@
             if (this.inProgress === this.currentListLength) {// disable the clear button if no items in list we can be remove
                 $clearBtn.prop("disabled", true);
             }
+
             while (thisS.toUpload[i] === null || thisS.toUpload[i] === '') { // do it until you find a file
                 i++;
             }
-            formData.append(thisS.inputName, thisS.toUpload[i]);//append the first file to the form data
-            $.each(this.options.data, function (key, value) {// append all extra data
-                formData.append(key, value);
-            });
-            thisS.$element.find('input.ssi-uploadInput').trigger('beforeUpload.ssi-uploader');
-            ajaxLoopRequest(formData, i);// make the request
+            var file = thisS.toUpload[i]
+            if (typeof this.options.transformFile === 'function') {
+                try {
+                    file = this.options.transformFile(thisS.toUpload[i]);// execute the transformFile
+                    if (file instanceof Promise) {
+                        file.then(function (file) {
+                            thisS.appendFileToFormData(formData, file)
+                            ajaxLoopRequest(formData, i)
+                        })
+                    } else {
+                        console.log("TCL: Ssi_upload.22222.uploadFiles -> thisS", thisS)
+                        thisS.appendFileToFormData(formData, file)
+                        ajaxLoopRequest(formData, i)
+                    }
+                } catch (err) {
+                    if (!this.options.ignoreCallbackErrors) {
+                        console.error('There is an error in transformFile');
+                        return console.error(err);
+                    }
+                }
+            } else {
+                thisS.appendFileToFormData(formData, file)
+                ajaxLoopRequest(formData, i)
+            }
         }
 
         //--------------start of ajax request-----------------------
@@ -523,7 +550,7 @@
                             return;
                         }
                     }
-                    thisS.$element.find('input.ssi-uploadInput').trigger('beforeEachUpload.ssi-uploader',[fileInfo]);
+                    thisS.$element.find('input.ssi-uploadInput').trigger('beforeEachUpload.ssi-uploader', [fileInfo]);
                     if (xhr.status === 0) {
                         if (xhr.statusText === 'canceled') {//if user used beforeEachUpload to abort the request
                             if (typeof msg === 'undefined') {//if no message
@@ -641,7 +668,7 @@
                         console.log(err);
                     }
                 }
-                thisS.$element.find('input.ssi-uploadInput').trigger('onEachUpload.ssi-uploader',[fileInfo]);
+                thisS.$element.find('input.ssi-uploadInput').trigger('onEachUpload.ssi-uploader', [fileInfo]);
                 thisS.inProgress--;//one less in progress upload
                 $clearBtn.prop("disabled", false);
                 if (getCompleteStatus(thisS)) {//if no more files in progress
@@ -763,7 +790,7 @@
                 }
             }
         }
-        thisS.$element.find('input.ssi-uploadInput').trigger('onUpload.ssi-uploader',[type]);
+        thisS.$element.find('input.ssi-uploadInput').trigger('onUpload.ssi-uploader', [type]);
         var $uploadBtn = thisS.$element.find('#ssi-uploadBtn');
         thisS.$element.find('#ssi-clearBtn').prop("disabled", false);
         $uploadBtn.prop("disabled", false)
@@ -783,6 +810,7 @@
 
     $.fn.ssi_uploader = function (opts) {
         var defaults = {
+            allowDuplicates: false,
             url: '',
             data: {},
             locale: 'en',
