@@ -419,12 +419,37 @@
 
     };
 
-    Ssi_upload.prototype.appendFileToFormData = function (formData, file) {
+    Ssi_upload.prototype.appendFileToFormData = function (file) {
+        var formData = new FormData();//set the form data
+
         formData.append(this.inputName, file);//append the first file to the form data
         $.each(this.options.data, function (key, value) {// append all extra data
             formData.append(key, value);
         });
-        this.$element.find('input.ssi-uploadInput').trigger('beforeUpload.ssi-uploader');
+        return formData;
+    }
+
+
+    Ssi_upload.prototype.tryToTransform = function (file, callback) {
+        if (typeof this.options.transformFile === 'function') {
+            try {
+                file = this.options.transformFile(file);// execute the transformFile
+                if (file instanceof Promise) {
+                    file.then(function (newFile) {
+                        callback(newFile)
+                    })
+                } else {
+                    callback(file)
+                }
+            } catch (err) {
+                if (!this.options.ignoreCallbackErrors) {
+                    console.error('There is an error in transformFile');
+                    return console.error(err);
+                }
+            }
+        } else {
+            callback(file)
+        }
     }
     Ssi_upload.prototype.uploadFiles = function () {// upload the pending files
         if (this.pending > 0) {
@@ -448,7 +473,6 @@
                 $clearBtn = this.$element.find('#ssi-clearBtn');
             $uploadBtn.prop("disabled", true);
             var thisS = this,
-                formData = new FormData(),//set the form data
                 i = this.totalFilesLength;
             if (this.totalFilesLength !== 0 && !this.options.preview) {
                 setNamePreview(this);
@@ -460,34 +484,15 @@
                 $clearBtn.prop("disabled", true);
             }
 
-            while (thisS.toUpload[i] === null || thisS.toUpload[i] === '') { // do it until you find a file
+            while (!thisS.toUpload[i]) { // do it until you find a file
                 i++;
             }
             var file = thisS.toUpload[i]
-            if (typeof this.options.transformFile === 'function') {
-                try {
-                    file = this.options.transformFile(thisS.toUpload[i]);// execute the transformFile
-                    if (file instanceof Promise) {
-                        file.then(function (file) {
-                            thisS.appendFileToFormData(formData, file)
-                            ajaxLoopRequest(formData, i)
-                        })
-                    } else {
-                        thisS.appendFileToFormData(formData, file)
-                        ajaxLoopRequest(formData, i)
-                    }
-                } catch (err) {
-                    if (!this.options.ignoreCallbackErrors) {
-                        console.error('There is an error in transformFile');
-                        return console.error(err);
-                    }
-                }
-            } else {
-                thisS.appendFileToFormData(formData, file)
+            thisS.tryToTransform(file, function (newFile) {
+                var formData = thisS.appendFileToFormData(newFile)
                 ajaxLoopRequest(formData, i)
-            }
+            })
         }
-
         //--------------start of ajax request-----------------------
         function ajaxLoopRequest(formData, ii) {
             var selector = 'table.ssi-imgToUploadTable';
@@ -525,6 +530,8 @@
                 async: true,
                 beforeSend: function (xhr, settings) {
                     thisS.uploadList[ii] = xhr;
+                    console.log("TCL: ajaxLoopRequest -> thisS.toUpload", thisS.toUpload)
+                    console.log("TCL: ajaxLoopRequest -> ii", ii)
                     $uploadBtn.find('#ssi-up_loading') //add spiner to uploadbutton
                         .html('<i class="fa fa-spinner fa-pulse"></i>');
                     var fileInfo = {
@@ -561,6 +568,7 @@
                     }
                 },
                 type: 'POST',
+                method: 'POST',
                 data: formData,
                 cache: false,
                 contentType: false,
@@ -682,16 +690,15 @@
 
             i = ii;
             i++;//go to the next element
-            while (thisS.toUpload[i] === null || thisS.toUpload[i] === '') {// do it until you find a file
+            while (!thisS.toUpload[i] && typeof thisS.toUpload[i] !== 'undefined') {// do it until you find a file
                 i++;
             }
             if (i < thisS.toUpload.length) {// if more files exist start the next request
-                formData = new FormData();
-                $.each(thisS.options.data, function (key, value) {
-                    formData.append(key, value);
-                });
-                formData.append(thisS.inputName, thisS.toUpload[i]);
-                ajaxLoopRequest(formData, i);
+                const nextFile = thisS.toUpload[i]
+                thisS.tryToTransform(nextFile, function (newFile) {
+                    var formData = thisS.appendFileToFormData(newFile)
+                    ajaxLoopRequest(formData, i)
+                })
             }
         }
     };
