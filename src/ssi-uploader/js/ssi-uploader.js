@@ -56,6 +56,28 @@
             $uploadBox = $('<div id="ssi-previewBox" class="ssi-uploadBox ssi-previewBox ' + (this.options.dropZone ? 'ssi-dropZonePreview ssi-dropZone' : '') + '"><div id="ssi-info">' + (this.options.dropZone ? '<div id="ssi-DropZoneBack">' + this.language.drag + '</div>' : '') + '<div id="ssi-fileNumber" class="ssi-hidden">?</div></div></div>');
             this.$element.append($uploadBox);
         }
+        if(this.options.initImgArray){
+            var getTemplate = function (index,filename) {
+                return '<table class="ssi-imgToUploadTable ssi-pending">' +
+                    '<tr><td class="ssi-upImgTd">' +
+                    '<img class="ssi-imgToUpload" src=""/><i class="fa-spin fa fa-spinner fa-pulse"></i>' +
+                    '</td></tr>' +
+                    '<tr><td><div id="ssi-uploadProgress' + index + '" class="ssi-hidden ssi-uploadProgress"></div></td></tr>' +
+                    '<tr><td><button data-delete="' + index + '" class=" ssi-button error ssi-removeBtn"><span class="trash10 trash"></span></button></td></tr>' +
+                    '<tr><td>' + filename + '</td></tr></table>'
+            };
+            for (var i = 0; i < this.options.initImgArray.length; i++) {
+                if (this.options.initImgArray[i] !== null) {
+                    var temp = this.options.initImgArray[i].split('/');
+                    $uploadBox.append(getTemplate(i,temp[temp.length - 1]));
+                    $uploadBox.find("#ssi-uploadProgress" + i).parents('table.ssi-imgToUploadTable')
+                        .find('.ssi-imgToUpload')
+                        .attr('src', this.options.initImgArray[i]) //set src of the image
+                        .next().remove();//remove the spinner
+                    this.options.initImgArray[i] = null;
+                }
+            }
+        }
         var thisS = this;
         var $input = $chooseBtn.find(".ssi-uploadInput");
         this.inputName = $input.attr('name') || 'files';
@@ -828,6 +850,7 @@
             maxFileSize: 2,
             inForm: false,
             ajaxOptions: {},
+            initImgArray :{},//add init Img Array
             onUpload: function () {
             },
             onEachUpload: function () {
