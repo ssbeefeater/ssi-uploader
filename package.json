@@ -21,7 +21,7 @@
     "gulp-rename": "^1.2.2",
     "gulp-sass": "^2.3.2",
     "gulp-sourcemaps": "^1.6.0",
-    "node-sass": "^3.4.2",
+    "node-sass": "^4.13.1",
     "sprity": "^1.0.8",
     "sprity-sass": "^1.0.4",
     "vinyl-source-stream": "^1.1.0"
